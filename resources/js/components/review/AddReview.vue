@@ -1,6 +1,6 @@
 <template>
 <div class="mt-5" id="add-review" v-if="!reviewSubmitted">
-    <h3 class="font-bold text-2xl mb-6">Been here? Add a review!</h3>
+    <h3 class="font-bold text-2xl mb-6">Ervaring met deze leverancier?</h3>
     <hr>
     <div class="py-4" v-if="user">
         <div class=" mt-2 lg:flex">
@@ -15,7 +15,7 @@
            
                     <div class="mb-3 flex justify-between">
                       <AddReviewStars @ratingChanged="setRating"/>
-                          <button type="button" class="block" @click="addImage = !addImage">Include Image</button>
+                          <button type="button" class="block" @click="addImage = !addImage">Afbeelding toevoegen</button>
                     </div>
 
                   <div class="mb-3" v-if="addImage">
@@ -25,14 +25,14 @@
 
                     <p class="text-sm text-red-400" v-if="error">{{error}}</p>
              
-                    <button type="submit" class="bg-red-500 hover:bg-red-400 button text-white ml-auto mt-3">Submit Review</button>
+                    <button type="submit" class="button ml-auto mt-3">Review plaatsen</button>
                 </form>
             </div>
 
 
         </div>
     </div>
-    <p class="py-3" v-else>Sign in To Review This Business...</p>
+    <p class="py-3" v-else>Log in om deze leverancier te beoordelen.</p>
 </div>
 </template>
 
@@ -73,7 +73,7 @@ export default {
   methods: {
     submitReview() {
       if (!this.body) {
-        return this.error = 'Please provide text when reviewing!';
+        return this.error = 'Schrijf kort waarom je deze score geeft.';
       }
       const formData = new FormData();
 

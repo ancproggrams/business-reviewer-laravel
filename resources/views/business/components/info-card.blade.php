@@ -1,4 +1,10 @@
-<div class="card">
+@php
+    $websiteUrl = $business->website_url;
+    if (! \Illuminate\Support\Str::startsWith($websiteUrl, ['http://', 'https://'])) {
+        $websiteUrl = 'https://' . $websiteUrl;
+    }
+@endphp
+<div class="card supplier-info-card">
     <ul>
         <li class="flex items-center pt-6 ">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -12,7 +18,7 @@
                     </path>
                 </g>
             </svg>
-            <a class="ml-2 text-blue-600 underline" href="https://www.{{ $business->website_url }}">Website</a>
+            <a class="ml-2" href="{{ $websiteUrl }}" target="_blank" rel="noopener">Website bekijken</a>
         </li>
         <hr class="my-5">
         <li class="flex items-center ">
@@ -39,7 +45,7 @@
                     </path>
                 </g>
             </svg>
-            <a class="ml-2 text-blue-600 underline" href="mailto:{{ $business->email }}">Message Us</a>
+            <a class="ml-2" href="mailto:{{ $business->email }}">Mail leverancier</a>
         </li>
     </ul>
 </div>

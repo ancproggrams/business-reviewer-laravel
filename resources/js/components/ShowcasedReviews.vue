@@ -1,6 +1,6 @@
 <template>
   <div v-if="reviews.length">
-    <h3 class="font-bold text-2xl mt-6 mb-4">Showcased Reviews</h3>
+    <h3 class="font-bold text-2xl mt-6 mb-4">Uitgelichte reviews</h3>
       <div v-if="reviews.length">
         <ul class="list showcased">
       <ShowcasedReview v-for="review in reviews" :review="review" :currentUserIsOwner="currentUserIsOwner" :key="review.id" />
@@ -32,7 +32,6 @@ export default {
   }, 
   mounted() {
     axios.get(`/businesses/${this.businessSlug}/review/showcased`).then(res => {
-      console.log(res.data.showcasedReviews);
       this.reviews = res.data.showcasedReviews;
     })
   }

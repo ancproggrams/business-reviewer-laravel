@@ -1,20 +1,17 @@
- <div class="card mt-4">
-     {{-- {{ dd($ratingsArray) }} --}}
-     <ul class="py-4 review-ratings">
+ <div class="card mt-4 supplier-rating-card">
+     <div class="supplier-rating-card__header">
+         <span>Reviewverdeling</span>
+         <strong>{{ number_format($business->average_review, 1, ',', '.') }}</strong>
+     </div>
+     <ul class="review-ratings">
+         @foreach ([5, 4, 3, 2, 1] as $rating)
          <li>
-             <div style="width: {{ $ratingsArray[5][1] }}%">5</div> {{ $ratingsArray[5][0] }}
+             <span class="review-ratings__label">{{ $rating }}</span>
+             <div class="review-ratings__track">
+                 <span style="width: {{ $ratingsArray[$rating][1] ?: 0 }}%"></span>
+             </div>
+             <span class="review-ratings__count">{{ $ratingsArray[$rating][0] }}</span>
          </li>
-         <li>
-             <div style="width: {{ $ratingsArray[4][1] }}%">4</div> {{ $ratingsArray[4][0] }}
-         </li>
-         <li>
-             <div style="width: {{ $ratingsArray[3][1] }}%">3</div> {{ $ratingsArray[3][0] }}
-         </li>
-         <li>
-             <div style="width: {{ $ratingsArray[2][1] }}%">2</div> {{ $ratingsArray[2][0] }}
-         </li>
-         <li>
-             <div style="width: {{ $ratingsArray[1][1] ?: 0}}%">1</div>{{ $ratingsArray[1][0] }}
-         </li>
+         @endforeach
      </ul>
  </div>

@@ -11,7 +11,7 @@
                 :currentUserIsOwner="currentUserIsOwner"
             />
         </div>
-        <p v-else class="text-gray-600">No reviews yet...</p>
+        <p v-else class="text-gray-600">Nog geen reviews.</p>
     </ul>
     </div>
 </template>
@@ -45,7 +45,7 @@ export default {
             })
             .catch(err => {
                 this.loading = false;
-                this.error = "Coult not fetch reviews, please try refreshing!";
+                this.error = "Reviews konden niet worden opgehaald.";
             });
         }
     },
