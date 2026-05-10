@@ -24,18 +24,25 @@ class BusinessController extends Controller
 
     public function create()
     {
+        if (auth()->user()->business()->exists()) {
+            return redirect(auth()->user()->business->path())
+                ->with('status', 'Your account already has a business profile.');
+        }
+
         $categories = Category::all();
         return view('business.create', compact('categories'));
     }
 
     public function store(BusinessStoreRequest $request)
     {
+        $validated = $request->validated();
 
-        $business = $this->storeBusiness($request->all());
+        $business = $this->storeBusiness($validated);
 
-        $business->attachCategories($request->categories);
+        $business->categories()->sync($validated['categories']);
 
-        return redirect($business->path());
+        return redirect($business->path())
+            ->with('status', 'Your business profile has been created.');
     }
 
     public function show(Business $business)
@@ -85,10 +92,13 @@ class BusinessController extends Controller
     {
         $imagePath = $request['front_image']->store('businesses');
 
+        unset($request['categories']);
+        unset($request['front_image']);
+
         $attributes['owner_id'] = auth()->id();
         $attributes['front_image'] = $imagePath;
         $attributes['slug'] = $this->generateUniqueSlug($request['name']);
-        unset($request['categories']);
+        $attributes['geo_location'] = $request['geo_location'] ?? '';
 
         return Business::create(array_merge($request, $attributes));
     }

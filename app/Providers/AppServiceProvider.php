@@ -6,6 +6,7 @@ use App\Review;
 use App\ReviewReaction;
 use App\Observers\ReviewObserver;
 use App\Observers\ReactionObserver;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Review::observe(ReviewObserver::class);
         ReviewReaction::observe(ReactionObserver::class);
     }

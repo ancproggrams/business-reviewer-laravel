@@ -1,0 +1,8 @@
+.git
+.railway
+node_modules
+vendor
+npm-debug.log
+.env
+storage/logs/*.log
+tests

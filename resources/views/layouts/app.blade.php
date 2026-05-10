@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'EyAy') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -33,6 +33,11 @@
         <modal></modal>
         @include('layouts.navigation')
         <main class="container m-auto my-5 p-3 md:p-10 bg-white rounded-md shadow-lg">
+            @if (session('status'))
+            <div class="mb-6 rounded bg-green-100 border border-green-300 text-green-800 px-4 py-3">
+                {{ session('status') }}
+            </div>
+            @endif
             @yield('content')
         </main>
     </div>

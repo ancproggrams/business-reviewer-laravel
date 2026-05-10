@@ -18,6 +18,10 @@ Route::get('/', function () {
     return view('welcome', compact('randomBusiness'));
 });
 
+Route::get('/health', function () {
+    return response('ok', 200);
+});
+
 
 Route::get('/businesses/{business}/review', 'ReviewController@index')->name('reviews.index');
 Route::get('/businesses/review/{review}', 'ReviewController@fetch');
@@ -26,7 +30,7 @@ Route::get('/businesses/{business}/review/showcased', 'ReviewController@showcase
 
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/businesses/create', 'BusinessController@create');
+    Route::get('/businesses/create', 'BusinessController@create')->name('business.create');
     Route::post('/businesses', 'BusinessController@store')->name('business.store');
 
     Route::post('/businesses/{business}/review', 'ReviewController@store')->name('reviews.store');

@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>EyAy — AI-leveranciers beoordelen</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -29,20 +29,29 @@
 </head>
 
 <body>
-    <div id="app" class="bg-gray-100">
+    <div id="app">
         <modal></modal>
         @include('layouts.navigation')
         <main>
-            <div class="header" style="background-image: url('{{ asset($randomBusiness->image()) }}');">
-                <form method="GET" action="/businesses">
-                    <input name="search" type="text" placeholder="Search for restaurants, bars & so much more!">
-                    <button type="submit">Search</button>
-                </form>
-
-                <div class="image__credits">Image provided by: <strong><a
-                            href="{{ $randomBusiness->path() }}">{{ $randomBusiness->name }}</a></strong>
+            <section class="eyay-hero">
+                <div>
+                    <p class="eyay-eyebrow"><span></span> Onafhankelijk trust platform</p>
+                    <h1>Vind en beoordeel AI-leveranciers die echt leveren.</h1>
+                    <p class="eyay-lead">EyAy helpt organisaties AI-partners vergelijken op bewijs, governance, implementatiekwaliteit en klantreviews. Geen vendor showcase, maar aantoonbare werking.</p>
+                    <form class="eyay-actions" method="GET" action="/businesses">
+                        <input name="search" type="text" placeholder="Zoek leverancier, AI-oplossing of branche">
+                        <button class="eyay-button primary" type="submit">Zoeken</button>
+                        <a class="eyay-button" href="{{ route('business.create') }}">Bedrijf aanmelden</a>
+                    </form>
                 </div>
-            </div>
+                <aside class="eyay-panel">
+                    <img src="{{ asset('images/people-collaboration.jpg') }}" alt="AI-leveranciers review overleg">
+                    <div class="eyay-score">
+                        <strong>92%</strong>
+                        <p>Matchscore op basis van categorie, bewijs, reviews en implementatieprofiel.</p>
+                    </div>
+                </aside>
+            </section>
         </main>
     </div>
 

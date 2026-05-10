@@ -53,7 +53,7 @@ class User extends Authenticatable
 
     public function business()
     {
-        return $this->hasOne(Business::class);
+        return $this->hasOne(Business::class, 'owner_id');
     }
 
     public function reviews()
@@ -68,7 +68,7 @@ class User extends Authenticatable
 
     public function ownerOf($business)
     {
-        return $business->owner_id == auth()->id();
+        return $business->owner_id == $this->id;
     }
 
     public function addAvatar($image)

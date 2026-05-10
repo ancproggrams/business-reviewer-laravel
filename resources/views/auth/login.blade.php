@@ -4,16 +4,18 @@
 
 
 <form method="POST" action="{{ route('login') }}" class="form">
-    <img src="{{ asset('/images/logo_notext.svg') }}" class="mx-auto mb-12" alt="review logo">
+    <img src="{{ asset('/images/eyay-logo-transparent.png') }}" class="mx-auto mb-8 auth-logo" alt="EyAy">
+    <h1 class="text-2xl font-bold mb-2">Inloggen</h1>
+    <p class="text-gray-600 mb-6">Log in om je leveranciersprofiel te beheren of reviews te plaatsen.</p>
     @csrf
 
     <div class="mb-3">
-        <label for="email" class="font-medium">{{ __('E-Mail Address') }}</label>
+        <label for="email" class="font-medium">E-mailadres</label>
         <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
     </div>
 
     <div class="mb-3">
-        <label for="password" class="font-medium col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+        <label for="password" class="font-medium col-md-4 col-form-label text-md-right">Wachtwoord</label>
         <input id="password" type="password" name="password" required autocomplete="current-password">
     </div>
 
@@ -23,12 +25,12 @@
                 {{ old('remember') ? 'checked' : '' }}>
 
             <label class="form-check-label" for="remember">
-                {{ __('Remember Me') }}
+                Onthoud mij
             </label>
         </div>
         @if (Route::has('password.request'))
         <a class="hover:underline" href="{{ route('password.request') }}">
-            {{ __('Forgot Your Password?') }}
+            Wachtwoord vergeten?
         </a>
         @endif
     </div>
@@ -40,7 +42,7 @@
     @enderror
 
     <button type="submit" class="nav-button mt-4">
-        {{ __('Login') }}
+        Inloggen
     </button>
 </form>
 

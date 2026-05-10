@@ -7,10 +7,11 @@
     <form action="/businesses" method="POST" class="form" enctype="multipart/form-data">
         @csrf
 
-        <h1 class="text-2xl font-bold mb-3">Add a new business</h1>
+        <h1 class="text-2xl font-bold mb-3">Bedrijf aanmelden</h1>
+        <p class="text-gray-600 mb-6">Maak een publiek leveranciersprofiel zodat organisaties je AI-oplossingen kunnen vinden, vergelijken en beoordelen.</p>
 
         <div class="py-3 flex flex-col">
-            <label for="country">Country</label>
+            <label for="country">Land</label>
             @include('helpers._country-dropdown')
             @error('country')
             <p class="text-red-400 text-xs">{{ $message }}</p>
@@ -18,7 +19,7 @@
         </div>
 
         <div class="py-3 flex flex-col">
-            <label for="name">Business Name</label>
+            <label for="name">Bedrijfsnaam</label>
             <input type="text" name="name" value="{{ old('name') }}" required>
             @error('name')
             <p class="text-red-400 text-xs">{{ $message }}</p>
@@ -26,7 +27,7 @@
         </div>
 
         <div class="py-3 flex flex-col">
-            <label for="address">Address</label>
+            <label for="address">Adres</label>
             <input type="text" name="address" value="{{ old('address') }}" required>
             @error('address')
             <p class="text-red-400 text-xs">{{ $message }}</p>
@@ -34,7 +35,7 @@
         </div>
 
         <div class="py-3 flex flex-col">
-            <label for="city">City</label>
+            <label for="city">Stad</label>
             <input type="text" name="city" value="{{ old('city') }}" required>
             @error('city')
             <p class="text-red-400 text-xs">{{ $message }}</p>
@@ -42,8 +43,8 @@
         </div>
 
         <div class="py-3 flex flex-col">
-            <label for="phone_number">Phone Number</label>
-            <input type="text" name="phone_number" value="{{ old('phone') }}" required>
+            <label for="phone_number">Telefoonnummer</label>
+            <input type="text" name="phone_number" value="{{ old('phone_number') }}" required>
             @error('phone_number')
             <p class="text-red-400 text-xs">{{ $message }}</p>
             @enderror
@@ -53,7 +54,7 @@
 
 
         <div class="py-3 flex flex-col">
-            <label for="location">Location</label>
+            <label for="location">Locatie</label>
             <input type="hidden" name="geo_location" value="" id="geo-location">
             @section('head')
             <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
@@ -97,8 +98,8 @@
 
 
         <div class="py-3 flex flex-col">
-            <label for="email">Business Email</label>
-            <input type="text" name="email" value="{{ old('phone') }}" required>
+            <label for="email">Zakelijk e-mailadres</label>
+            <input type="email" name="email" value="{{ old('email') }}" required>
             @error('email')
             <p class="text-red-400 text-xs">{{ $message }}</p>
             @enderror
@@ -106,27 +107,30 @@
 
 
         <div class="py-3 flex flex-col">
-            <label for="website_url">Website Address</label>
-            <input type="text" name="website_url" value="{{ old('website_url') }}" required>
+            <label for="website_url">Website</label>
+            <input type="url" name="website_url" value="{{ old('website_url') }}" placeholder="https://example.com" required>
             @error('website_url')
             <p class="text-red-400 text-xs">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="py-3 flex flex-col">
-            <label for="categories">Business Categories</label>
+            <label for="categories">AI-oplossingen</label>
             <select name="categories[]" multiple required>
                 @foreach ($categories as $category)
-                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                <option value="{{ $category->id }}" {{ in_array($category->id, old('categories', [])) ? 'selected' : '' }}>{{ $category->name }}</option>
                 @endforeach
             </select>
-            @error('name')
+            @error('categories')
+            <p class="text-red-400 text-xs">{{ $message }}</p>
+            @enderror
+            @error('categories.*')
             <p class="text-red-400 text-xs">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="py-3 flex flex-col">
-            <label for="description">Description</label>
+            <label for="description">Beschrijving</label>
             <textarea type="text" name="description" cols="30" rows="10">{{ old('description') }}</textarea>
             @error('description')
             <p class="text-red-400 text-xs">{{ $message }}</p>
@@ -134,17 +138,15 @@
         </div>
 
         <div class="py-3 flex flex-col">
-            <label for="front_image">Business Image</label>
-            <input type="file" name="front_image" class="py-2  rounded">
-            @error('image')
+            <label for="front_image">Afbeelding</label>
+            <input type="file" name="front_image" class="py-2  rounded" accept="image/*" required>
+            @error('front_image')
             <p class="text-red-400 text-xs">{{ $message }}</p>
             @enderror
         </div>
 
-        <button type="submit" class="py-2 px-5 bg-red-500 text-white rounded block w-full">Add New</button>
-        <small class="mt-2 block">By clicking, you agree to our <a class="text-blue-400" href="/terms-of-service">Terms
-                of
-                services</a></small>
+        <button type="submit" class="py-2 px-5 bg-red-500 text-white rounded block w-full">Leveranciersprofiel aanmaken</button>
+        <small class="mt-2 block">Door te klikken ga je akkoord met de voorwaarden van EyAy.</small>
     </form>
 
 </div>

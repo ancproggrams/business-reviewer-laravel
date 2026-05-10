@@ -1,5 +1,5 @@
 <template>
-            <span class="italic text-sm">{{ category.name }} </span>
+            <span class="category-chip">{{ category.name }}</span>
 </template>
 <style>
 

@@ -79,6 +79,10 @@ class Business extends Model
 
     public function image()
     {
+        if (Str::startsWith($this->front_image, 'images/')) {
+            return $this->front_image;
+        }
+
         return  'storage/' . $this->front_image;
     }
 

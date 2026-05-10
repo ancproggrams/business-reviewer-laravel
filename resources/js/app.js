@@ -90,19 +90,20 @@ const app = new Vue({
 
 const navDropdownBtn = document.querySelector("#nav-dropdown");
 
-navDropdownBtn.addEventListener("click", () => {
-    document.querySelector("#dropdown-items").classList.toggle("shown");
-});
+if (navDropdownBtn) {
+    navDropdownBtn.addEventListener("click", () => {
+        document.querySelector("#dropdown-items").classList.toggle("shown");
+    });
 
-window.addEventListener("click", e => {
-    // console.log(document.querySelector("#dropdown-items").contains(e.target));
-    if (
-        !document.querySelector("#dropdown-items").contains(e.target) &&
-        !document.querySelector("#nav-dropdown").contains(e.target)
-    ) {
-        document.querySelector("#dropdown-items").classList.remove("shown");
-    }
-});
+    window.addEventListener("click", e => {
+        if (
+            !document.querySelector("#dropdown-items").contains(e.target) &&
+            !document.querySelector("#nav-dropdown").contains(e.target)
+        ) {
+            document.querySelector("#dropdown-items").classList.remove("shown");
+        }
+    });
+}
 
 // window.addEventListener("click", function(e) {
 //     if (
