@@ -12,7 +12,7 @@ class ReviewController extends Controller
 
     public function index(Business $business)
     {
-        return $business->reviews;
+        return $business->reviews()->with(['author.avatar', 'image', 'reply'])->get();
     }
 
     public function store(Business $business)
@@ -21,7 +21,7 @@ class ReviewController extends Controller
 
         $attributes = request()->validate([
             'body' => ['required', 'string'],
-            'rating' => ['required', 'integer'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'image' => ['file', 'nullable']
         ]);
 
@@ -36,13 +36,15 @@ class ReviewController extends Controller
 
     public function fetch(Review $review)
     {
+        $review->load(['author.avatar', 'image', 'reply']);
+
         return compact('review');
     }
 
 
     public function showcased(Business $business)
     {
-       $showcasedReviews =  $business->reviews()->where('showcased', true)->get();
+       $showcasedReviews =  $business->reviews()->with(['author.avatar', 'image', 'reply'])->where('showcased', true)->get();
        return compact('showcasedReviews');
     }
 }

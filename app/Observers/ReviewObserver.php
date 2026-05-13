@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Review;
 use App\Business;
+use App\User;
+use Illuminate\Support\Facades\DB;
 
 class ReviewObserver
 {
@@ -15,17 +17,7 @@ class ReviewObserver
      */
     public function created(Review $review)
     {
-        // update rating of business
-        $business = Business::where('id', $review->business_id)->first();
-
-        $business->update([
-            'average_review' =>
-            intval(ceil($business->reviews->sum('rating') / $business->reviews->count('rating')))
-        ]);
-
-        $user = auth()->user();
-        $user->increment('review_count');
-        $user->update(['average_rating' => round($user->reviewAverage(), 1)]);
+        $this->refreshCounters($review->business_id, $review->user_id);
     }
     /**
      * Handle the review "updated" event.
@@ -35,7 +27,15 @@ class ReviewObserver
      */
     public function updated(Review $review)
     {
-        //
+        $this->refreshCounters($review->business_id, $review->user_id);
+
+        if ($review->getOriginal('business_id') && $review->getOriginal('business_id') != $review->business_id) {
+            $this->refreshBusinessCounter($review->getOriginal('business_id'));
+        }
+
+        if ($review->getOriginal('user_id') && $review->getOriginal('user_id') != $review->user_id) {
+            $this->refreshUserCounter($review->getOriginal('user_id'));
+        }
     }
 
     /**
@@ -46,7 +46,7 @@ class ReviewObserver
      */
     public function deleted(Review $review)
     {
-        //
+        $this->refreshCounters($review->business_id, $review->user_id);
     }
 
     /**
@@ -57,7 +57,7 @@ class ReviewObserver
      */
     public function restored(Review $review)
     {
-        //
+        $this->refreshCounters($review->business_id, $review->user_id);
     }
 
     /**
@@ -68,6 +68,45 @@ class ReviewObserver
      */
     public function forceDeleted(Review $review)
     {
-        //
+        $this->refreshCounters($review->business_id, $review->user_id);
+    }
+
+    protected function refreshCounters($businessId, $userId)
+    {
+        DB::transaction(function () use ($businessId, $userId) {
+            $this->refreshBusinessCounter($businessId);
+            $this->refreshUserCounter($userId);
+        });
+    }
+
+    protected function refreshBusinessCounter($businessId)
+    {
+        if (! $businessId) {
+            return;
+        }
+
+        $stats = Review::where('business_id', $businessId)
+            ->selectRaw('COUNT(*) AS review_count, AVG(rating) AS average_rating')
+            ->first();
+
+        Business::where('id', $businessId)->update([
+            'average_review' => $stats && $stats->review_count ? (int) ceil($stats->average_rating) : 0,
+        ]);
+    }
+
+    protected function refreshUserCounter($userId)
+    {
+        if (! $userId) {
+            return;
+        }
+
+        $stats = Review::where('user_id', $userId)
+            ->selectRaw('COUNT(*) AS review_count, AVG(rating) AS average_rating')
+            ->first();
+
+        User::where('id', $userId)->update([
+            'review_count' => $stats ? (int) $stats->review_count : 0,
+            'average_rating' => $stats && $stats->review_count ? round($stats->average_rating, 1) : 0,
+        ]);
     }
 }

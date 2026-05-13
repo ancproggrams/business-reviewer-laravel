@@ -16,7 +16,6 @@ class Review extends Model
     protected $guarded = [];
     protected $appends = ['isReactedFunny', 'isReactedUseful'];
     public $timestamps = true;
-    public $with = ['author', 'image', 'reply'];
     public $casts = [
         'showcased' => 'boolean',
 

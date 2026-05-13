@@ -114,16 +114,16 @@ class BusinessesTest extends TestCase
     {
         $business = factory('App\Business')->create(['average_review' => 0]);
         $this->signIn();
-        $business->addReview('A good review', 5);
-        $business->addReview('Another good review', 5);
+        $business->addReview('A good review', 5, null, factory('App\User')->create()->id);
+        $business->addReview('Another good review', 5, null, factory('App\User')->create()->id);
 
 
         $this->assertEquals(5, $business->fresh()->average_review);
 
         $this->signIn();
-        $business->addReview('Average review', 3);
-        $business->addReview('Bad review', 2);
-        $business->addReview('Very Bad review', 1);
+        $business->addReview('Average review', 3, null, factory('App\User')->create()->id);
+        $business->addReview('Bad review', 2, null, factory('App\User')->create()->id);
+        $business->addReview('Very Bad review', 1, null, factory('App\User')->create()->id);
 
 
         $this->assertEquals(4, $business->fresh()->average_review);

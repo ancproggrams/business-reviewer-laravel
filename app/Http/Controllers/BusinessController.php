@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Business;
 use App\Category;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use App\Http\Requests\BusinessStoreRequest;
@@ -52,40 +53,85 @@ class BusinessController extends Controller
             $business->incrementViewCount();
             Session::put($session_key,Str::random(2));
         }
+
+        $business->load(['categories', 'images', 'reviews.author.avatar', 'reviews.image', 'reviews.reply']);
+
         return view('business.show', compact('business'));
     }
 
     protected function filterWithParams()
     {
-        $queryBuilder = new Business;
-        if (request()->category) {
-            $queryBuilder = Category::where('name', request()->category)->first()->businesses();
-        }
-        if (request()->search){
-            $search_query = request()->search;
+        $queryBuilder = Business::query();
 
-            $queryBuilder = 
-            $queryBuilder->where(function($query) use ($search_query) {
-                    $query
-                    ->orWhere('name','LIKE',"%{$search_query}%")
-                    ->orWhere('country','LIKE',"%{$search_query}%")
-                    ->orWhere('city','LIKE',"%{$search_query}%")
-                    ->orWhere('slug','LIKE',"%{$search_query}%")
-                    ->orWhere('description','LIKE',"%{$search_query}%");
-            });
+        if (request()->filled('category')) {
+            $category = Category::where('name', request()->category)->first();
+            $queryBuilder = $category ? $category->businesses() : Business::query()->whereRaw('1 = 0');
         }
-        if (request()->rated) {
+
+        if (request()->filled('search')) {
+            $queryBuilder = $this->applySearch($queryBuilder, request()->search);
+        }
+
+        if (request()->filled('rated')) {
             $queryBuilder =  $queryBuilder->where('average_review', '=', request()->rated);
         }
 
-        if (request()->orderBy) {
+        $allowedSorts = ['average_review', 'created_at', 'name'];
+        if (request()->filled('orderBy') && in_array(request()->orderBy, $allowedSorts, true)) {
             $queryBuilder = $queryBuilder->orderBy(request()->orderBy, 'DESC');
         }
+
         if(request()->wantsJson()){
-            return $queryBuilder->with('categories')->get();
+            $limit = min(max((int) request()->input('limit', request()->input('take', 100)), 1), 100);
+            return $queryBuilder->with('categories')->limit($limit)->get();
         }else{
-            return $queryBuilder->get();
+            return $queryBuilder->with('categories')->paginate(20)->appends(request()->query());
         }
+    }
+
+    protected function applySearch($queryBuilder, $searchQuery)
+    {
+        $searchQuery = trim($searchQuery);
+
+        if ($searchQuery === '') {
+            return $queryBuilder;
+        }
+
+        $driver = DB::connection()->getDriverName();
+
+        if ($driver === 'mysql') {
+            return $queryBuilder->whereRaw(
+                'MATCH (name, country, city, slug, description) AGAINST (? IN BOOLEAN MODE)',
+                [$this->mysqlBooleanSearchTerm($searchQuery)]
+            );
+        }
+
+        if ($driver === 'pgsql') {
+            return $queryBuilder->whereRaw(
+                "to_tsvector('simple', coalesce(name, '') || ' ' || coalesce(country, '') || ' ' || coalesce(city, '') || ' ' || coalesce(slug, '') || ' ' || coalesce(description, '')) @@ plainto_tsquery('simple', ?)",
+                [$searchQuery]
+            );
+        }
+
+        return $queryBuilder->where(function ($query) use ($searchQuery) {
+            $query
+                ->orWhere('name', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('country', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('city', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('slug', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('description', 'LIKE', "%{$searchQuery}%");
+        });
+    }
+
+    protected function mysqlBooleanSearchTerm($searchQuery)
+    {
+        $terms = preg_split('/\s+/', $searchQuery);
+        $terms = array_filter(array_map(function ($term) {
+            $term = preg_replace('/[^[:alnum:]_-]/u', '', $term);
+            return $term ? '+' . $term . '*' : null;
+        }, $terms));
+
+        return $terms ? implode(' ', $terms) : $searchQuery;
     }
 
     protected function storeBusiness($request)

@@ -100,9 +100,9 @@ class ReviewsTest extends TestCase
     public function test_owner_of_the_business_can_set_a_showcase_review()
     {
         $user = $this->signIn();
-        $business = BusinessFactory::create(['owner_id' => $user]);
+        $business = BusinessFactory::create(['owner_id' => $user->id]);
 
-        $review = $business->addReview('An amazing place where ...', 5, null);
+        $review = $business->addReview('An amazing place where ...', 5, null, factory('App\User')->create()->id);
 
         $this->assertFalse($review->showcased);
         $this->post(route('reviews.showcase', $review->id))->assertRedirect($business->path());
@@ -114,7 +114,7 @@ class ReviewsTest extends TestCase
         $this->signIn();
         $business = BusinessFactory::create();
 
-        $review = $business->addReview('An amazing place where ...', 5, null);
+        $review = $business->addReview('An amazing place where ...', 5, null, factory('App\User')->create()->id);
 
         $this->post(route('reviews.showcase', $review->id))->assertForbidden();
         $this->assertFalse($review->showcased);
@@ -123,10 +123,10 @@ class ReviewsTest extends TestCase
     public function test_only_the_owner_can_change_the_showcased_review()
     {
         $user = $this->signIn();
-        $business = BusinessFactory::create(['owner_id' => $user]);
+        $business = BusinessFactory::create(['owner_id' => $user->id]);
 
-        $firstReview = $business->addReview('An amazing place where ...', 5, null);
-        $secondReview = $business->addReview('Best pizza in town ...', 5, null);
+        $firstReview = $business->addReview('An amazing place where ...', 5, null, factory('App\User')->create()->id);
+        $secondReview = $business->addReview('Best pizza in town ...', 5, null, factory('App\User')->create()->id);
 
         $this->post(route('reviews.showcase', $firstReview->id));
         $this->assertTrue($firstReview->fresh()->showcased);

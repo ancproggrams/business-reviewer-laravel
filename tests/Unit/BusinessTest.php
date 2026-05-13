@@ -95,12 +95,12 @@ class BusinessTest extends TestCase
 
         $this->assertEquals(0, $business->reviewCount());
 
-        $business->addReview('The first review', 4);
+        $business->addReview('The first review', 4, null, factory(User::class)->create()->id);
 
         $this->assertEquals(1, $business->reviewCount());
 
-        $business->addReview('The second review', 3);
-        $business->addReview('The third review', 2);
+        $business->addReview('The second review', 3, null, factory(User::class)->create()->id);
+        $business->addReview('The third review', 2, null, factory(User::class)->create()->id);
 
         $this->assertEquals(3, $business->reviewCount());
     }

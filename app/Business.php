@@ -41,6 +41,11 @@ class Business extends Model
         return $this->belongsToMany(Category::class);
     }
 
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = $value ? strtolower($value) : $value;
+    }
+
     public function addReview($body, $rating, $image = null, $userId = null)
     {
         $review = $this->reviews()

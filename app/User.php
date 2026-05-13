@@ -22,10 +22,6 @@ class User extends Authenticatable
      */
     protected $guarded = [];
 
-
-
-    protected $with = ['avatar'];
-
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -59,6 +55,11 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = $value ? strtolower($value) : $value;
     }
 
     public function reviewAverage()
